@@ -1,0 +1,23 @@
+{%- assign pubs = site.publications | sort: "date" | reverse -%}
+{%- assign years = pubs | group_by_exp: "p", "p.date | date: '%Y'" -%}
+{%- for year in years %}
+<h3 class="pub-year">{{ year.name }}</h3>
+{%- for p in year.items %}
+<div class="pub">
+  <div class="pub-title">{{ p.title }}</div>
+  <div class="pub-authors">{{ p.authors }}</div>
+  <div class="pub-venue">{{ p.venue }}</div>
+  {%- assign abstract = p.content | strip %}
+  <div class="pub-links">
+    {%- if abstract != "" %}<button class="btn abstract-toggle" type="button" aria-expanded="false">Abstract</button>{% endif %}
+    {%- if p.arxivurl %}<a class="btn" href="{{ p.arxivurl }}">arXiv</a>{% endif %}
+    {%- if p.pdfurl %}<a class="btn" href="{{ p.pdfurl }}">PDF</a>{% endif %}
+    {%- if p.paperurl %}<a class="btn" href="{{ p.paperurl }}">Paper</a>{% endif %}
+    {%- if p.codeurl %}<a class="btn" href="{{ p.codeurl }}">Code</a>{% endif %}
+  </div>
+  {%- if abstract != "" %}
+  <p class="abstract">{{ abstract | markdownify | remove: "<p>" | remove: "</p>" | strip }}</p>
+  {%- endif %}
+</div>
+{%- endfor %}
+{%- endfor %}

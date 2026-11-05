@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="{{ site.locale | slice: 0,2 }}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  {%- assign page_title = page.title | default: site.title -%}
+  <title>{% if page.url == "/" %}{{ site.title }}{% else %}{{ page_title }} | {{ site.title }}{% endif %}</title>
+  <meta name="description" content="{{ page.description | default: site.description | escape }}">
+  <meta property="og:title" content="{{ site.title }}">
+  <meta property="og:description" content="{{ page.description | default: site.description | escape }}">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="{{ page.url | absolute_url }}">
+  <meta name="twitter:card" content="summary">
+  <link rel="canonical" href="{{ page.url | absolute_url }}">
+  <link rel="icon" href="{{ '/images/favicon.ico' | relative_url }}">
+  <link rel="stylesheet" href="{{ '/assets/css/minimal.css' | relative_url }}">
+  <script>
+    // Apply the saved theme before first paint to avoid a flash.
+    (function () {
+      document.documentElement.classList.add('js');
+      try {
+        var t = localStorage.getItem('theme');
+        if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
+      } catch (e) {}
+    })();
+  </script>
+</head>
+<body>
+  <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Toggle dark/light mode" title="Toggle dark/light mode"></button>
+
+  <div class="layout">
+    <aside class="sidebar">
+      <img class="avatar" src="{{ '/images/' | append: site.author.avatar | relative_url }}" alt="{{ site.author.name }}">
+      <h1 class="name">{{ site.author.name }}</h1>
+      {% include contacts.html %}
+    </aside>
+
+    <main class="content">
+      {{ content }}
+    </main>
+  </div>
+
+  <script>
+    document.addEventListener('click', function (e) {
+      var b = e.target.closest('.abstract-toggle');
+      if (!b) return;
+      var open = b.getAttribute('aria-expanded') !== 'true';
+      b.setAttribute('aria-expanded', open);
+      b.closest('.pub').querySelector('.abstract').classList.toggle('open', open);
+    });
+  </script>
+  <script>
+    (function () {
+      var root = document.documentElement;
+      var btn = document.getElementById('theme-toggle');
+      var mq = window.matchMedia('(prefers-color-scheme: dark)');
+      function current() {
+        return root.getAttribute('data-theme') || (mq.matches ? 'dark' : 'light');
+      }
+      function render() { btn.textContent = current() === 'dark' ? '\u2600' : '\u263E'; }
+      btn.addEventListener('click', function () {
+        var next = current() === 'dark' ? 'light' : 'dark';
+        root.setAttribute('data-theme', next);
+        try { localStorage.setItem('theme', next); } catch (e) {}
+        render();
+      });
+      if (mq.addEventListener) mq.addEventListener('change', render);
+      render();
+    })();
+  </script>
+</body>
+</html>
